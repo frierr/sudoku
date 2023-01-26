@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sudoku</title>
+    <link rel="stylesheet" href="./sudoku.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Caveat&display=swap');
+    </style>
+</head>
+<body>
+    <div class="main">
+        <div class="center" id="actions-top"></div>
+        <div class="center">
+            <div class="play-field" id="field"></div>
+        </div>
+        <div class="center" id="actions-bot">
+            <div class="slidecontainer">
+                <span>Difficulty:</span>
+                <input type="range" min="2" max="6" value="4" class="slider" id="diff">
+            </div>
+            <div class="button" onclick="gameStart();" id="actions-start">start</div>
+            <div class="button" onclick="checkWinCondition();" id="actions-check">check</div>
+        </div>
+    </div>
+    <script src="./sudoku.js"></script>
+</body>
+</html>

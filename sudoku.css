@@ -1,0 +1,133 @@
+html, body {
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    background: rgba(0,255,127,1);
+    background: linear-gradient(69deg, rgba(255,127,127,1) 0%, rgba(127,255,0,1) 21%, rgba(0,255,127,1) 71%, rgba(0,127,127,1) 97%);
+    height: 100%;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 900;
+    font-size: 1.5em;
+    user-select: none;
+    color: black;
+}
+
+.main {
+    display: grid;
+    grid-template-rows: 150px auto 150px;
+    gap: 0;
+    margin: auto;
+    padding: 0;
+    width: 69%;
+    min-width: 1200px;
+    min-height: 100%;
+    background-color: rgba(0,255,127,0.3);
+    border-left: 2px solid rgba(0,127,127,1);
+    border-right: 2px solid rgba(0,127,127,1);
+    vertical-align: middle;
+    text-align: center;
+}
+
+.center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#actions-top {
+    background: linear-gradient(180deg, rgba(0,127,127,0.5) 0%, rgba(0,127,127,0.2) 69%, rgba(0,127,127,0) 95%);
+}
+
+#actions-bot {
+    background: linear-gradient(0deg, rgba(0,127,127,0.5) 0%, rgba(0,127,127,0.2) 69%, rgba(0,127,127,0) 95%);
+}
+
+.button {
+    margin: 10px;
+    width: 200px;
+    border: 1px solid rgba(0,127,127,1);
+    border-radius: 10px;
+}
+
+.button:hover {
+    border: 2px solid rgba(0,127,127,1);
+    color: whitesmoke;
+    cursor: pointer;
+}
+
+.slidecontainer {
+    margin: 10px;
+    width: 200px;
+    font-size: 0.69em;
+}
+  
+.slider {
+    appearance: none;
+    width: 100%;
+    height: 5px;
+    border-radius: 5px;
+    background: whitesmoke;
+    outline: none;
+    opacity: 0.7;
+    transition: opacity .2s;
+}
+  
+.slider:hover {
+    opacity: 1;
+}
+
+.slider::-webkit-slider-thumb {
+    appearance: none;
+    width: 10px;
+    height: 25px;
+    border-radius: 3px;
+    background: rgba(0,127,127,1);
+    cursor: pointer;
+    box-shadow: 1px 1px 3px black;
+}
+
+.box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: aliceblue;
+    border: 1px solid rgba(0,127,127,1);
+    font-size: 1em;
+}
+
+.box-sel {
+    font-family: 'Caveat', cursive;
+    font-size: 1.5em;
+    color: blue;
+}
+
+.box-sel:hover {
+    background-color: yellowgreen;
+    cursor: pointer;
+}
+
+.play-field {
+    display: grid;
+    grid-auto-columns: 50px;
+    grid-auto-rows: 50px;
+    gap: 5px;
+    background-color: black;
+    box-shadow: 5px 5px 15px black;
+}
+
+::-webkit-scrollbar {
+    display: none;
+}
+
+@media only screen and (max-width: 1200px) {
+    .main {
+        width: 100%;
+        min-width: 0;
+        min-height: 100%;
+        border: none;
+    }
+    
+    ::-webkit-scrollbar {
+        display: none;
+    }
+}
