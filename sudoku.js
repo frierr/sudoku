@@ -1,10 +1,34 @@
 var sudoku;
 var mask;
 var game;
+var target = [0, 0];
 
 window.onload = function() {
     document.getElementById("actions-check").style.display = "none";
 }
+
+window.addEventListener("keydown", function (event) {
+    if (event.defaultPrevented) {
+      return;
+    }
+    switch (event.key) {
+    case "0":
+    case "1":
+    case "2":
+    case "3":
+    case "4":
+    case "5":
+    case "6":
+    case "7":
+    case "8":
+    case "9":
+        keyPress(Number(event.key));
+        break;
+    default:
+        return;
+    }
+    event.preventDefault();
+}, true);
 
 function shuffle(array) {
     let currentIndex = array.length,  randomIndex;
@@ -46,6 +70,10 @@ function createBox(value, type, posX, posY) {
         box.onclick = function () {
             boxClick(posX, posY);
         };
+        box.addEventListener("mouseenter", (event) => {
+            target[0] = posX;
+            target[1] = posY;
+        }, false);
     }
     box.textContent = (value == 0 ? "" : value);
     return box;
@@ -260,5 +288,10 @@ function boxClick(posX, posY) {
     } else {
         game[posX][posY]++;
     }
+    display();
+}
+
+function keyPress(num) {
+    game[target[0]][target[1]] = num;
     display();
 }
