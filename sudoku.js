@@ -40,10 +40,6 @@ function shuffle(array) {
     return array;
 }
 
-function swap(array, A, B) {
-    [array[A], array[B]] = [array[B], array[A]];
-}
-
 function display() {
     document.getElementById("field").textContent = "";
     for (var i = 0; i < sudoku.length; i++) {
@@ -79,98 +75,110 @@ function createBox(value, type, posX, posY) {
     return box;
 }
 
-function generateField() {
-    var field = [[],[],[],[],[],[],[],[],[]];
-    var pattern = [1, 2, 3, 4, 5, 6, 7, 8];
-    var row = shuffle([1, 2, 3, 4, 5, 6, 7, 8, 9]);
-    var num = 0;
-    var top = false;
-    field[0] = copyArray(field[0], row);
-    //
-    row = shiftArray(row);
-    num = pattern[Math.floor(Math.random() * 5 + 3)];
-    pattern = arrayRemove(pattern, num);
-    field[num] = copyArray(field[num], row);
-    top = num < 6;
-    //
-    row = shiftArray(row);
-    if (top) {
-        num = pattern[Math.floor(Math.random() * 2 + 3)];
-        pattern = arrayRemove(pattern, num);
-        field[num] = copyArray(field[num], row);
-    } else {
-        num = pattern[Math.floor(Math.random() * 2 + 3)];
-        pattern = arrayRemove(pattern, num);
-        field[num] = copyArray(field[num], row);
+function generateFieldLoop() {
+    var field;
+    var counter = 1;
+    while (counter != 0) {
+        field = generateField();
+        counter = arrayUndefined(field);
     }
-    //
-    row = shiftArray(row);
-    num = pattern[Math.round(Math.random())];
-    pattern = arrayRemove(pattern, num);
-    field[num] = copyArray(field[num], row);
-    //
-    row = shiftArray(row);
-    if (top) {
-        num = pattern[Math.round(Math.random()) + 1];
-        pattern = arrayRemove(pattern, num);
-        field[num] = copyArray(field[num], row);
-    } else {
-        num = pattern[Math.floor(Math.random()) + 3];
-        pattern = arrayRemove(pattern, num);
-        field[num] = copyArray(field[num], row);
-    }
-    //
-    row = shiftArray(row);
-    if (top) {
-        num = pattern[Math.round(Math.random()) + 2];
-        pattern = arrayRemove(pattern, num);
-        field[num] = copyArray(field[num], row);
-    } else {
-        num = pattern[Math.floor(Math.random()) + 1];
-        pattern = arrayRemove(pattern, num);
-        field[num] = copyArray(field[num], row);
-    }
-    //
-    row = shiftArray(row);
-    num = pattern[0];
-    pattern = arrayRemove(pattern, num);
-    field[num] = copyArray(field[num], row);
-    //
-    row = shiftArray(row);
-    if (top) {
-        num = pattern[0];
-        pattern = arrayRemove(pattern, num);
-        field[num] = copyArray(field[num], row);
-    } else {
-        num = pattern[1];
-        pattern = arrayRemove(pattern, num);
-        field[num] = copyArray(field[num], row);
-    }
-    //
-    row = shiftArray(row);
-    num = pattern[0];
-    pattern = arrayRemove(pattern, num);
-    field[num] = copyArray(field[num], row);
-    //
-    field = shuffleField(field);
-    return transpose(field);
+    return field;
 }
 
-function copyArray(target, array) {
-    target = [];
+function generateField() {
+    field = generateMask(0);
+    field = generateSubfield(field, 0, 0);
+    field = generateSubfield(field, 0, 3);
+    field = generateSubfield(field, 0, 6);
+    field = generateSubfield(field, 3, 0);
+    field = generateSubfield(field, 6, 0);
+    field = generateSubfield(field, 3, 3);
+    field = generateSubfield(field, 3, 6);
+    field = generateSubfield(field, 6, 3);
+    field = generateSubfield(field, 6, 6);
+    return field;
+}
+
+function generateSubfieldWrap(field, X, Y) {
+    while (arrayUndefined(field, X, Y)) {
+        for (var i = 0; i < 3; i++) {
+            for (var j = 0; j < 3; j++) {
+                field[X + i][Y + j] = 0;
+            }
+        }
+        field = generateSubfield(field, X, Y);
+    }
+    return field;
+}
+
+function arrayUndefined(array, X, Y) {
+    for (var i = 0; i < 3; i++) {
+        for (var j = 0; j < 3; j++) {
+            if (array[X + i][Y + j] == undefined || array[X + i][Y + j] == 0) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+function arrayUndefined(array) {
+    var counter = 0;
     for (var i = 0; i < array.length; i++) {
-        target[i] = array[i];
+        for (var j = 0; j < array[i].length; j++) {
+            if (array[i][j] == undefined || array[i][j] == 0) {
+                counter++;
+            }
+        }
+    }
+    return counter;
+}
+
+function generateSubfield(field, X, Y) {
+    var nums = [
+        [[],[],[]],
+        [[],[],[]],
+        [[],[],[]]
+    ];
+    //check context and populate nums array
+    for (var i = 0; i < nums.length; i++) {
+        for (var j = 0; j < nums[i].length; j++) {
+            nums[i][j] = removeContextValues(shuffle([1, 2, 3, 4, 5, 6, 7, 8, 9]), field, X + i, Y + j);
+        }
+    }
+    //for each cell find the shortest nums list
+    for (var k = 0; k < 9; k++) {
+        var a = 0, b = 0;
+        for (var i = 0; i < nums.length; i++) {
+            for (var j = 0; j < nums[i].length; j++) {
+                if (nums[i][j].length != 0 && (nums[i][j].length < nums[a][b].length || nums[a][b].length == 0)) {
+                    a = i;
+                    b = j;
+                }
+            }
+        }
+        //get selected value
+        var cell = nums[a][b][0];
+        nums[a][b] = [];
+        field[X + a][Y + b] = cell;
+        //remove value from other nums lists
+        for (var i = 0; i < nums.length; i++) {
+            for (var j = 0; j < nums[i].length; j++) {
+                nums[i][j] = arrayRemove(nums[i][j], cell);
+            }
+        }
+    }
+    return field;
+}
+
+function removeContextValues(target, context, X, Y) {
+    for (var i = 0; i < X; i++) {
+        target = arrayRemove(target, context[i][Y]);
+    }
+    for (var i = 0; i < Y; i++) {
+        target = arrayRemove(target, context[X][i]);
     }
     return target;
-}
-
-function shiftArray(array) {
-    var result = [];
-    for (var i = 1; i < array.length; i++) {
-        result[i - 1] = array[i];
-    }
-    result[result.length] = array[0];
-    return result;
 }
 
 function arrayRemove(array, item) {
@@ -178,44 +186,6 @@ function arrayRemove(array, item) {
         array.splice(array.indexOf(item), 1);
     }
     return array;
-}
-
-function shuffleField(field) {
-    var temp = [
-        [field[0],field[1],field[2]],
-        [field[3],field[4],field[5]],
-        [field[6],field[7],field[8]]
-    ];
-    temp = shuffle(temp);
-    field[0] = temp[0][0];
-    field[1] = temp[0][1];
-    field[2] = temp[0][2];
-    field[3] = temp[1][0];
-    field[4] = temp[1][1];
-    field[5] = temp[1][2];
-    field[6] = temp[2][0];
-    field[7] = temp[2][1];
-    field[8] = temp[2][2];
-    temp = [field[0],field[1],field[2]];
-    temp = shuffle(temp);
-    field[0] = temp[0];
-    field[1] = temp[1];
-    field[2] = temp[2];
-    temp = [field[3],field[4],field[5]];
-    temp = shuffle(temp);
-    field[3] = temp[0];
-    field[4] = temp[1];
-    field[5] = temp[2];
-    temp = [field[6],field[7],field[8]];
-    temp = shuffle(temp);
-    field[6] = temp[0];
-    field[7] = temp[1];
-    field[8] = temp[2];
-    return field;
-}
-
-function transpose(matrix) {
-    return matrix[0].map((col, i) => matrix.map(row => row[i]));
 }
 
 function generateMask(difficulty) {
@@ -242,19 +212,9 @@ function generateSubmask(difficulty) {
 }
 
 function gameStart() {
-    sudoku = generateField();
+    sudoku = generateFieldLoop();
     mask = generateMask(document.getElementById("diff").value);
-    game = [
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0]
-    ];
+    game = generateMask(0);
     document.getElementById("actions-start").textContent = "restart";
     document.getElementById("actions-check").style.display = "block";
     display();
